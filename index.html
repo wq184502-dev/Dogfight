@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>[hidden]{display:none!important}html{color-scheme:dark}body{margin:0;font-size:14px}</style>
-<title>드래곤 플라이트</title>
+<title>Dogfight</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700&display=swap">
 <style>
 /* Layout: one arcade cabinet, HUD strip above a 9:16 canvas, help line below */
@@ -49,7 +49,7 @@ p{margin:0;text-align:center;font-size:.75rem;color:var(--muted)}
 <div class="wrap">
   <div class="hud"><span><small>점수</small><span id="score">0</span></span><span><small>스테이지</small><span id="stg">1</span></span><span><small>최고</small><span id="best">0</span></span><span class="lives" id="lives"></span></div>
   <div class="stage">
-    <canvas id="c" tabindex="0" aria-label="드래곤 플라이트 게임 화면"></canvas>
+    <canvas id="c" tabindex="0" aria-label="Dogfight 게임 화면"></canvas>
     <div class="msg" id="msg"></div>
     <button class="shopbtn" id="shopbtn" type="button">스킨 상점</button>
     <section class="shop" id="shop" hidden aria-label="스킨 상점">
@@ -507,7 +507,7 @@ window.addEventListener('keydown',function(e){keys[e.key]=1;if(e.key===' '||e.ke
 window.addEventListener('keyup',function(e){delete keys[e.key]});
 
 reset();state='ready';
-msg('드래곤 플라이트','탭하거나 스페이스로 출격<br>보유 '+wallet+'P · 매 스테이지 끝에 보스 등장');syncBtn();
+msg('Dogfight','탭하거나 스페이스로 출격<br>보유 '+wallet+'P · 매 스테이지 끝에 보스 등장');syncBtn();
 requestAnimationFrame(function(n){last=n;loop(n)});
 })();
 </script>
