@@ -178,7 +178,7 @@ function drawBg(){
   bp.forEach(function(q){ctx.fillStyle=q.t==='e'?'rgba(255,'+Math.round(120+q.y/H*100)+',40,'+(.35+.4*Math.abs(Math.sin(q.y*.05)))+')':'rgba(255,255,255,.75)';ctx.beginPath();ctx.arc(q.x,q.y,q.r,0,6.3);ctx.fill()});
 }
 var REP=[['snipe','beam','wall','summon','ring'],['charge','spiral','wall','orbs','snipe'],['orbs','ring','beam','summon','spiral']];
-var PN={snipe:'저격',beam:['화염 브레스','집중 광선','저주 광선'],wall:'탄막 벽',summon:'부하 소환',ring:'링 폭발',spiral:'회오리',orbs:'추적 구체',charge:'돌진'};
+var PN={snipe:'저격',beam:['주포 사격','함포 사격','외계 광선'],wall:'탄막 벽',summon:'부하 소환',ring:'링 폭발',spiral:'회오리',orbs:'추적 구체',charge:'돌진'};
 function patEnd(b){b.pat=null;b.free=false;b.cd=Math.max(40,80-stage*6)-(b.hp/b.max<.5?15:0)}
 function bossAI(b,sx,sy){
   var p2=b.hp/b.max<.5,i,T,pt;
@@ -526,57 +526,89 @@ function drawShip(c,x,y,sk,t,sc){
   }
   c.restore();
 }
-function drawDragon(x,y,s,body,wing,flip){
-  ctx.save();ctx.translate(x,y);ctx.scale(s,flip?-s:s);
-  ctx.fillStyle=wing;
-  ctx.beginPath();ctx.moveTo(-6,-2);ctx.lineTo(-30,10);ctx.lineTo(-22,-4);ctx.lineTo(-34,-10);ctx.lineTo(-6,-12);ctx.closePath();ctx.fill();
-  ctx.beginPath();ctx.moveTo(6,-2);ctx.lineTo(30,10);ctx.lineTo(22,-4);ctx.lineTo(34,-10);ctx.lineTo(6,-12);ctx.closePath();ctx.fill();
-  ctx.fillStyle=body;
-  ctx.beginPath();ctx.moveTo(0,-22);ctx.lineTo(8,-8);ctx.lineTo(6,14);ctx.lineTo(0,22);ctx.lineTo(-6,14);ctx.lineTo(-8,-8);ctx.closePath();ctx.fill();
-  ctx.fillStyle='#FFE28A';ctx.beginPath();ctx.arc(-3,-10,1.8,0,6.3);ctx.arc(3,-10,1.8,0,6.3);ctx.fill();
-  ctx.restore();
-}
+var KH='#B5A76A',OL='#6E7F45',DK='#3B4A28',RD='#D0392B',GL='#8FD3E0';
+function star(c,x,y,r,col){c.fillStyle=col;c.beginPath();for(var i=0;i<10;i++){var a=-1.5708+i*.6283,q=i%2?r*.45:r,px2=x+Math.cos(a)*q,py2=y+Math.sin(a)*q;i?c.lineTo(px2,py2):c.moveTo(px2,py2)}c.closePath();c.fill()}
+function prop(c,x,y,r,tt){c.fillStyle='rgba(225,225,225,.22)';c.beginPath();c.arc(x,y,r,0,6.3);c.fill();c.strokeStyle='rgba(30,30,30,.85)';c.lineWidth=1.5;c.beginPath();c.moveTo(x+Math.cos(tt)*r,y+Math.sin(tt)*r);c.lineTo(x-Math.cos(tt)*r,y-Math.sin(tt)*r);c.stroke()}
 function drawEnemy(e){
-  var ty=e.type,tt=e.t;
-  if(ty<=2){drawDragon(e.x,e.y,ty===2?1:.65,ty===2?'#B85CFF':ty===1?'#FF7A5C':'#5CD6FF',ty===2?'#7A3BD1':ty===1?'#C24A33':'#2E8FB8',true);return}
-  ctx.save();ctx.translate(e.x,e.y);
-  if(ty===3){var fl=Math.sin(tt*.6)*7;
-    ctx.fillStyle='#4A3A6B';ctx.beginPath();ctx.moveTo(-3,0);ctx.lineTo(-16,-6+fl);ctx.lineTo(-11,4);ctx.lineTo(-6,2);ctx.lineTo(-3,6);ctx.lineTo(0,3);ctx.lineTo(3,6);ctx.lineTo(6,2);ctx.lineTo(11,4);ctx.lineTo(16,-6+fl);ctx.lineTo(3,0);ctx.fill();
-    ctx.fillStyle='#6B5A94';ctx.beginPath();ctx.ellipse(0,0,5,7,0,0,6.3);ctx.fill();
-    ctx.fillStyle='#FF5D5D';ctx.fillRect(-3,-2,2,2);ctx.fillRect(1,-2,2,2)}
-  else if(ty===4){var b=Math.sin(tt*.1)*2;
-    ctx.fillStyle='rgba(180,255,220,.85)';ctx.beginPath();ctx.arc(0,-2+b,14,3.14,0);ctx.lineTo(14,10);
-    for(var k=0;k<4;k++){ctx.lineTo(14-7*(k+.5),6+((k+tt/8)%2)*4);ctx.lineTo(14-7*(k+1),10)}
-    ctx.closePath();ctx.fill();
-    ctx.fillStyle='#0B0F1E';ctx.beginPath();ctx.arc(-5,-2+b,2.5,0,6.3);ctx.arc(5,-2+b,2.5,0,6.3);ctx.fill();ctx.fillRect(-3,4+b,6,2)}
-  else{
-    ctx.strokeStyle='#8A6A2E';ctx.lineWidth=2;
-    for(var k=-1;k<=1;k+=2)for(var m=0;m<3;m++){ctx.beginPath();ctx.moveTo(k*10,-6+m*7);ctx.lineTo(k*(19+Math.sin(tt*.2+m)*2),-8+m*9);ctx.stroke()}
-    ctx.fillStyle='#C99A3E';ctx.beginPath();ctx.ellipse(0,0,15,17,0,0,6.3);ctx.fill();
-    ctx.strokeStyle='#8A6A2E';ctx.beginPath();ctx.moveTo(0,-17);ctx.lineTo(0,17);ctx.moveTo(-14,-4);ctx.lineTo(14,-4);ctx.stroke();
-    ctx.fillStyle='#8A6A2E';ctx.beginPath();ctx.moveTo(-6,15);ctx.lineTo(-11,26);ctx.lineTo(-2,17);ctx.moveTo(6,15);ctx.lineTo(11,26);ctx.lineTo(2,17);ctx.fill();
-    ctx.fillStyle='#FF5D5D';ctx.fillRect(-6,6,4,3);ctx.fillRect(2,6,4,3)}
-  ctx.restore();
+  var ty=e.type,tt=e.t,c=ctx,k;
+  c.save();c.translate(e.x,e.y);
+  if(ty===0){ // 반군 전투기
+    c.fillStyle='#FF9A3D';c.beginPath();c.moveTo(-2,-11);c.lineTo(0,-19+Math.sin(tt)*2);c.lineTo(2,-11);c.fill();
+    both(c,[3,5,15,-5,15,-9,3,-3],OL,DK);both(c,[3,-6,8,-11,8,-13,3,-10],OL,DK);
+    poly(c,[0,15,3,5,3.6,-8,0,-11,-3.6,-8,-3,5],KH,DK);
+    c.fillStyle='#4A7A86';c.beginPath();c.ellipse(0,6,1.8,3.2,0,0,6.3);c.fill();
+    c.fillStyle=RD;c.beginPath();c.arc(9,-4,1.7,0,6.3);c.arc(-9,-4,1.7,0,6.3);c.fill();
+  }else if(ty===1){ // 공격 헬기
+    ln(c,DK,1.3,[-6,8,-6,-6]);ln(c,DK,1.3,[6,8,6,-6]);
+    poly(c,[-1.6,-6,1.6,-6,1,-22,-1,-22],OL,DK);c.fillStyle=DK;c.fillRect(-4,-23,8,2);prop(c,0,-22,3.6,tt*1.5);
+    c.fillStyle=DK;c.fillRect(-9.5,-6,3,8);c.fillRect(6.5,-6,3,8);
+    c.fillStyle=OL;c.strokeStyle=DK;c.lineWidth=1;c.beginPath();c.ellipse(0,0,5.6,10,0,0,6.3);c.fill();c.stroke();
+    c.fillStyle=GL;c.beginPath();c.ellipse(0,6,3.4,4,0,0,6.3);c.fill();
+    c.fillStyle='rgba(225,225,225,.1)';c.beginPath();c.arc(0,-1,18,0,6.3);c.fill();
+    c.strokeStyle='rgba(25,25,25,.75)';c.lineWidth=2.4;for(k=0;k<2;k++){var ra=tt*.9+k*1.5708;c.beginPath();c.moveTo(Math.cos(ra)*18,Math.sin(ra)*18-1);c.lineTo(-Math.cos(ra)*18,-Math.sin(ra)*18-1);c.stroke()}
+    c.fillStyle=DK;c.beginPath();c.arc(0,-1,2.2,0,6.3);c.fill();
+  }else if(ty===2){ // 폭격기
+    both(c,[4,5,26,3,26,-4,4,-7],OL,DK);both(c,[9,9,15,9,15,-8,9,-8],'#4B5A34');
+    prop(c,12,10,7,tt*1.2);prop(c,-12,10,7,tt*1.2+1);
+    both(c,[4,-14,13,-17,13,-20,4,-19],OL,DK);
+    poly(c,[0,21,4.2,11,4.4,-14,0,-21,-4.4,-14,-4.2,11],KH,DK);
+    c.fillStyle=GL;c.beginPath();c.ellipse(0,14,2.4,4,0,0,6.3);c.fill();
+    star(c,17,-1,3.4,RD);star(c,-17,-1,3.4,RD);
+  }else if(ty===3){ // 자폭 드론
+    ln(c,DK,2,[-8,-8,8,8]);ln(c,DK,2,[8,-8,-8,8]);
+    prop(c,8,8,4.8,tt*1.7);prop(c,-8,8,4.8,-tt*1.7);prop(c,8,-8,4.8,-tt*1.7+1);prop(c,-8,-8,4.8,tt*1.7+1);
+    c.fillStyle='#4B5563';c.strokeStyle='#1F2937';c.lineWidth=1;c.beginPath();c.arc(0,0,4.4,0,6.3);c.fill();c.stroke();
+    c.fillStyle=Math.floor(tt/8)%2?RD:'#5A1010';c.beginPath();c.arc(0,0,1.7,0,6.3);c.fill();
+  }else if(ty===4){ // 대공 비행선
+    both(c,[4,-13,12,-21,12,-15,5,-9],OL,DK);
+    c.fillStyle='#8F9C7C';c.strokeStyle=DK;c.lineWidth=1.2;c.beginPath();c.ellipse(0,0,13,19,0,0,6.3);c.fill();c.stroke();
+    c.fillStyle='rgba(255,255,255,.16)';c.beginPath();c.ellipse(-4,-1,4,14,0,0,6.3);c.fill();
+    c.fillStyle=OL;c.fillRect(-12.6,-3,25.2,4);
+    star(c,0,-9,3.6,RD);
+    c.fillStyle=DK;c.fillRect(-3.5,12,7,7);c.fillStyle='#555';c.beginPath();c.arc(0,18,3,0,6.3);c.fill();
+    c.fillStyle=Math.floor(tt/10)%2?RD:'#5A1010';c.beginPath();c.arc(0,8,1.7,0,6.3);c.fill();
+  }else{ // 건쉽
+    both(c,[5,5,23,3,23,-3,5,-6],'#7A828C','#3B4148');
+    both(c,[9,7,13,7,13,-6,9,-6],'#4B5058');both(c,[17,6,21,6,21,-5,17,-5],'#4B5058');
+    prop(c,11,8,5,tt*1.3);prop(c,-11,8,5,tt*1.3+1);prop(c,19,7,4.6,tt*1.3+.5);prop(c,-19,7,4.6,tt*1.3+1.5);
+    poly(c,[-13,-18,13,-18,13,-21,-13,-21],'#7A828C',DK);
+    poly(c,[0,22,5,13,5.6,-16,0,-22,-5.6,-16,-5,13],'#8B939D',DK);
+    c.fillStyle=RD;c.fillRect(-6.4,-2,1.6,3);c.fillRect(-6.4,5,1.6,3);c.fillRect(4.8,-2,1.6,3);c.fillRect(4.8,5,1.6,3);
+    c.fillStyle=GL;c.beginPath();c.ellipse(0,16,2.6,3.6,0,0,6.3);c.fill();
+    star(c,0,-6,3.6,RD);
+  }
+  c.restore();
 }
+var BNAME=['대형 폭격기','공중 전함','외계 모함'];
 function drawBoss(k,h){
-  var c1='hsl('+h+',60%,35%)',c2='hsl('+h+',70%,55%)',c3='hsl('+h+',70%,70%)';
-  if(k===0){
-    ctx.fillStyle=c1;
-    ctx.beginPath();ctx.moveTo(-20,-10);ctx.lineTo(-90,20);ctx.lineTo(-70,-8);ctx.lineTo(-100,-30);ctx.lineTo(-20,-34);ctx.closePath();ctx.fill();
-    ctx.beginPath();ctx.moveTo(20,-10);ctx.lineTo(90,20);ctx.lineTo(70,-8);ctx.lineTo(100,-30);ctx.lineTo(20,-34);ctx.closePath();ctx.fill();
-    ctx.fillStyle=c2;ctx.beginPath();ctx.ellipse(0,0,34,44,0,0,6.3);ctx.fill();
-    ctx.fillStyle=c3;ctx.beginPath();ctx.moveTo(-22,-30);ctx.lineTo(-30,-52);ctx.lineTo(-12,-38);ctx.moveTo(22,-30);ctx.lineTo(30,-52);ctx.lineTo(12,-38);ctx.fill();
-  }else if(k===1){
-    ctx.strokeStyle=c1;ctx.lineWidth=6;
-    for(var s=-1;s<=1;s+=2){for(var m=0;m<4;m++){ctx.beginPath();ctx.moveTo(s*30,-24+m*16);ctx.lineTo(s*(66+Math.sin(boss.t*.1+m)*4),-34+m*20);ctx.stroke()}
-      ctx.fillStyle=c3;ctx.beginPath();ctx.moveTo(s*20,-38);ctx.lineTo(s*50,-70);ctx.lineTo(s*34,-30);ctx.fill()}
-    ctx.fillStyle=c2;ctx.beginPath();ctx.ellipse(0,0,46,50,0,0,6.3);ctx.fill();
-    ctx.strokeStyle=c1;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-50);ctx.lineTo(0,50);ctx.moveTo(-44,-8);ctx.lineTo(44,-8);ctx.stroke();
-  }else{
-    ctx.fillStyle=c2;ctx.beginPath();ctx.arc(0,-6,44,3.14,0);ctx.lineTo(44,30);
-    for(var m=0;m<6;m++){ctx.lineTo(44-15*(m+.5),22+Math.sin(boss.t*.15+m)*8+8);ctx.lineTo(44-15*(m+1),30)}
-    ctx.closePath();ctx.fill();
-    ctx.fillStyle=c1;ctx.beginPath();ctx.arc(-46,-6,10,0,6.3);ctx.arc(46,-6,10,0,6.3);ctx.fill();
+  var c=ctx,bt=boss.t,i;
+  if(k===0){ // 대형 폭격기
+    both(c,[14,10,100,-8,100,-20,14,-22],OL,DK);
+    both(c,[20,6,90,-8,90,-14,20,-16],'#7F9052');
+    for(i=-1;i<=1;i+=2){[34,64].forEach(function(x){c.fillStyle='#4B5A34';c.strokeStyle=DK;c.lineWidth=1;c.beginPath();c.ellipse(i*x,-2,6,14,0,0,6.3);c.fill();c.stroke();prop(c,i*x,13,9,bt*(i>0?.9:-.9)+x)});
+      c.fillStyle='#FFF';c.beginPath();c.arc(i*78,-13,10,0,6.3);c.fill();star(c,i*78,-13,9,RD)}
+    both(c,[10,-40,36,-52,36,-58,10,-56],OL,DK);
+    poly(c,[0,52,14,36,22,6,22,-30,10,-50,-10,-50,-22,-30,-22,6,-14,36],KH,DK);
+    c.fillStyle=OL;c.fillRect(-22,-12,44,6);
+    c.fillStyle=GL;c.strokeStyle=DK;c.lineWidth=1;c.beginPath();c.ellipse(0,34,9,10,0,0,6.3);c.fill();c.stroke();
+    c.fillStyle=DK;c.beginPath();c.arc(10,14,4.2,0,6.3);c.arc(-10,14,4.2,0,6.3);c.fill();ln(c,DK,2.4,[10,14,10,25]);ln(c,DK,2.4,[-10,14,-10,25]);
+  }else if(k===1){ // 공중 전함
+    both(c,[16,-6,62,-4,62,-16,16,-32],'#4A5768','#2C3541');
+    for(i=-1;i<=1;i+=2)prop(c,i*44,-6,11,bt*(i>0?.8:-.8));
+    poly(c,[0,56,14,38,22,-30,14,-54,-14,-54,-22,-30,-14,38],'#7B8794','#3D4855');
+    poly(c,[0,48,9,34,14,-30,8,-46,-8,-46,-14,-30,-9,34],'#8E99A5');
+    c.fillStyle=RD;c.fillRect(-14,-10,28,3);
+    [32,6,-22].forEach(function(y){ln(c,'#2B333D',3.4,[0,y,0,y+17]);c.fillStyle='#56616E';c.strokeStyle=DK;c.lineWidth=1;c.beginPath();c.arc(0,y,8.5,0,6.3);c.fill();c.stroke()});
+    c.fillStyle='#4E5A67';c.beginPath();c.arc(17,12,4.2,0,6.3);c.arc(-17,12,4.2,0,6.3);c.fill();
+    c.fillStyle='#5D6875';c.fillRect(-7,-42,14,10);star(c,0,-37,4,RD);
+  }else{ // 외계 모함
+    for(i=-2;i<=1;i++)ln(c,'#2E4E59',5,[i*16+8,10,i*16+8+Math.sin(bt*.1+i)*9,38]);
+    c.fillStyle='#3E6B78';c.strokeStyle='#22404A';c.lineWidth=2;c.beginPath();c.ellipse(0,0,74,32,0,0,6.3);c.fill();c.stroke();
+    c.fillStyle='#4F8394';c.beginPath();c.ellipse(0,-2,50,20,0,0,6.3);c.fill();
+    both(c,[26,24,34,24,30,36],'#2E4E59');
+    c.fillStyle='rgba(150,240,255,.4)';c.beginPath();c.ellipse(0,-6,26,24,0,0,6.3);c.fill();
+    var pr=8+Math.sin(bt*.12)*2.2;c.fillStyle='rgba(255,77,109,.35)';c.beginPath();c.arc(0,-4,pr+6,0,6.3);c.fill();c.fillStyle='#FF4D6D';c.beginPath();c.arc(0,-4,pr,0,6.3);c.fill();c.fillStyle='#FFE6EA';c.beginPath();c.arc(-2,-6,2.6,0,6.3);c.fill();
+    for(i=0;i<14;i++){var a=i*.449+bt*.03;c.fillStyle='hsl('+((bt*4+i*25)%360)+',90%,65%)';c.beginPath();c.arc(Math.cos(a)*66,Math.sin(a)*26,2.7,0,6.3);c.fill()}
   }
 }
 function drawBullet(b){
@@ -613,12 +645,10 @@ function draw(){
     ctx.save();ctx.translate(boss.x+(boss.flash>0?rnd(-2.5,2.5):0),boss.y);
     drawBoss(boss.kind,h);
     if(boss.flash>0){ctx.fillStyle='rgba(255,255,255,'+(boss.flash*.07)+')';ctx.beginPath();ctx.arc(0,0,54,0,6.3);ctx.fill()}
-    ctx.fillStyle='#FFF';ctx.beginPath();ctx.arc(-12,4,7,0,6.3);ctx.arc(12,4,7,0,6.3);ctx.fill();
-    ctx.fillStyle='#E5484D';ctx.beginPath();ctx.arc(-12,6,3.5,0,6.3);ctx.arc(12,6,3.5,0,6.3);ctx.fill();
     ctx.restore();
     var fr=Math.max(0,boss.hp/boss.max);
     ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(14,8,W-28,26);
-    ctx.fillStyle='#FFB347';ctx.font='700 11px sans-serif';ctx.textAlign='left';ctx.fillText('BOSS  STAGE '+stage,20,19);
+    ctx.fillStyle='#FFB347';ctx.font='700 11px sans-serif';ctx.textAlign='left';ctx.fillText('BOSS · '+BNAME[boss.kind]+' · STAGE '+stage,20,19);
     ctx.textAlign='right';ctx.fillText(Math.ceil(fr*100)+'%',W-20,19);
     ctx.fillStyle='#2A1218';ctx.fillRect(20,23,W-40,7);
     ctx.fillStyle=boss.flash>0?'#FFFFFF':fr<.25?'#FF9A3D':'#FF5D5D';ctx.fillRect(20,23,(W-40)*fr,7);
